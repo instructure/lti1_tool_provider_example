@@ -1,0 +1,19 @@
+<html>
+<head><title>Demo LTI Tool</title></head>
+<body>
+<p>Hi, <%= @username %>, this is an LTI tool. I hope you learned a lot.</p>
+<% if @tp.instructor? %>
+  <p>You are a teacher, so you could configure this tool now if it were cool enough to have configurations.</p>
+  <p>If you come back as a student you may get to take a test.</p>
+<% elsif @tp.student? %>
+  <p>You're lucky this isn't an assessment launch, you just get to sit here and do nothing.</p>
+<% elsif @tp.roles && @tp.roles.any? %>
+  <p>Your roles are <%= @tp.roles.join(",") %></p>
+<% else %>
+  <p>You don't have a role so I don't know what to do with you.</p>
+<% end %>
+
+<%= erb :_return_to_lms %>
+
+</body>
+</html>

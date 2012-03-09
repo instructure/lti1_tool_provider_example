@@ -1,0 +1,12 @@
+<html>
+  <head><title>Demo LTI Assessment Tool</title></head>
+  <body>
+    <h1>Demo LTI Assessment Tool</h1>
+    <form action="/assessment" method="post">
+      <p>Hi, <%= @username %>. On a scale of <code>0.0</code> to <code>1.0</code>, how well would you say you did on this assessment?</p>
+      <input name='score' type='text' width='5' id='score' />
+      <input type='submit' value='Submit' />
+      <p>If you want to enter an invalid score here, you can see how Canvas will reject it.</p>
+    </form>
+  </body>
+</html>
