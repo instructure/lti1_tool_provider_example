@@ -24,17 +24,17 @@ post '/lti_tool' do
     if secret = $oauth_creds[key]
       @tp = IMS::LTI::ToolProvider.new(key, secret, params)
     else
-      show_error "Consumer key wasn't recognized"
-      return
+      @tp = IMS::LTI::ToolProvider.new(nil, nil, params)
+      @tp.lti_msg = "Your consumer didn't use a recognized key."
+      @tp.lti_errorlog = "You did it wrong!"
+      return show_error "Consumer key wasn't recognized"
     end
   else
-    show_error "No consumer key"
-    return
+    return show_error "No consumer key"
   end
 
   if !@tp.valid_request?(request)
-    show_error "The OAuth signature was invalid"
-    return
+    return show_error "The OAuth signature was invalid"
   end
 
   # save the launch parameters for use in later request
@@ -46,6 +46,7 @@ post '/lti_tool' do
     erb :assessment
   else
     # normal tool launch without grade write-back
+    @tp.lti_msg = "Sorry that tool was so boring"
     erb :boring_tool
   end
 end
@@ -55,15 +56,13 @@ post '/assessment' do
   if session['launch_params']
     key = session['launch_params']['oauth_consumer_key']
   else
-    show_error "The tool never launched"
-    return
+    return show_error "The tool never launched"
   end
 
   @tp = IMS::LTI::ToolProvider.new(key, $oauth_creds[key], session['launch_params'])
 
   if !@tp.outcome_service?
-    show_error "This tool wasn't lunched as an outcome service"
-    return
+    return show_error "This tool wasn't lunched as an outcome service"
   end
 
   # post the given score to the TC
