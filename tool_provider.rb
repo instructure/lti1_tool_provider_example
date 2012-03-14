@@ -37,6 +37,16 @@ post '/lti_tool' do
     return show_error "The OAuth signature was invalid"
   end
 
+  if Time.now.utc.to_i - @tp.request_oauth_timestamp.to_i > 60*60
+    return show_error "Your request is too old."
+  end
+
+  # this isn't actually checking anything like it should, just want people
+  # implementing real tools to be aware they need to check the nonce
+  if was_nonce_used_in_last_x_minutes?(@tp.request_oauth_nonce, 60)
+    return show_error "Why are you reusing the nonce?"
+  end
+
   # save the launch parameters for use in later request
   session['launch_params'] = @tp.to_params
 
@@ -86,4 +96,9 @@ get '/tool_config.xml' do
 
   headers 'Content-Type' => 'text/xml'
   tc.to_xml(:indent => 2)
+end
+
+def was_nonce_used_in_last_x_minutes?(nonce, minutes=60)
+  # some kind of caching solution or something to keep a short-term memory of used nonces
+  false
 end
