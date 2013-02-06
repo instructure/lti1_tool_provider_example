@@ -4,6 +4,7 @@ require 'ims/lti'
 require 'oauth/request_proxy/rack_request'
 
 enable :sessions
+set :protection, :except => :frame_options
 
 get '/' do
   erb :index
@@ -17,9 +18,7 @@ def show_error(message)
   erb :error
 end
 
-# The url for launching the tool
-# It will verify the OAuth signature
-post '/lti_tool' do
+def authorize!
   if key = params['oauth_consumer_key']
     if secret = $oauth_creds[key]
       @tp = IMS::LTI::ToolProvider.new(key, secret, params)
@@ -51,6 +50,13 @@ post '/lti_tool' do
   session['launch_params'] = @tp.to_params
 
   @username = @tp.username("Dude")
+end
+
+# The url for launching the tool
+# It will verify the OAuth signature
+post '/lti_tool' do
+  authorize!
+
   if @tp.outcome_service?
     # It's a launch for grading
     erb :assessment
