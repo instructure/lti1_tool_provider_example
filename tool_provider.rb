@@ -94,11 +94,51 @@ post '/assessment' do
   end
 end
 
+post '/content' do
+  authorize!
+
+  @tp.extend IMS::LTI::Extensions::Content::ToolProvider
+
+  url_scheme = request.ssl? ? "https" : "http"
+  domain = request.env['SERVER_NAME']
+  @context_url = "#{url_scheme}://#{request.env['HTTP_HOST']}"
+
+  erb :content
+end
+
+get '/public' do
+  'This is a public page'
+end
+
+get '/oembed' do
+  content_type :json
+  require 'json'
+
+  { "version" => "1.0",
+    "type" => "video",
+    "provider_name" => "YouTube",
+    "provider_url" => "http://youtube.com/",
+    "width" => 425,
+    "height" => 344,
+    "title" => "Amazing Nintendo Facts",
+    "author_name" => "ZackScott",
+    "author_url" => "http://www.youtube.com/user/ZackScott",
+    "html" =>
+    "<object width=\"425\" height=\"344\">
+			<param name=\"movie\" value=\"http://www.youtube.com/v/M3r2XDceM6A&fs=1\"></param>
+			<param name=\"allowFullScreen\" value=\"true\"></param>
+			<param name=\"allowscriptaccess\" value=\"always\"></param>
+			<embed src=\"http://www.youtube.com/v/M3r2XDceM6A&fs=1\"
+				type=\"application/x-shockwave-flash\" width=\"425\" height=\"344\"
+				allowscriptaccess=\"always\" allowfullscreen=\"true\"></embed>
+		</object>" }.to_json
+end
+
 get '/tool_config.xml' do
   host = request.scheme + "://" + request.host_with_port
   url = host + "/lti_tool"
   tc = IMS::LTI::ToolConfig.new(:title => "Example Sinatra Tool Provider", :launch_url => url)
-  tc.description = "This example LTI Tool Provider supports LIS Outcome pass-back."
+  tc.description = "This example LTI Tool Provider supports LIS Outcome pass-back and the content extension."
 
   headers 'Content-Type' => 'text/xml'
   tc.to_xml(:indent => 2)
