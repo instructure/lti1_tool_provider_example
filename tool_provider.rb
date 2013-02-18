@@ -137,8 +137,19 @@ end
 get '/tool_config.xml' do
   host = request.scheme + "://" + request.host_with_port
   url = host + "/lti_tool"
+
   tc = IMS::LTI::ToolConfig.new(:title => "Example Sinatra Tool Provider", :launch_url => url)
   tc.description = "This example LTI Tool Provider supports LIS Outcome pass-back and the content extension."
+  tc.extend IMS::LTI::Extensions::Canvas::ToolConfig
+  tc.canvas_privacy_public!
+  tc.canvas_domain! request.host_with_port
+  tc.canvas_text! "Content Extension Tool"
+  tc.canvas_icon_url! "#{host}/selector.png"
+  tc.canvas_selector_dimensions! 300, 500
+  params = {:url => host + "/content"}
+  tc.canvas_homework_submission! params
+  tc.canvas_editor_button! params
+  tc.canvas_resource_selection! params
 
   headers 'Content-Type' => 'text/xml'
   tc.to_xml(:indent => 2)
