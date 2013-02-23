@@ -13,8 +13,12 @@ end
 # the consumer keys/secrets
 $oauth_creds = {"test" => "secret", "testing" => "supersecret"}
 
-def show_error(message)
-  @message = message
+def register_error(message)
+  @error_message = message
+end
+
+def show_error(message = nil)
+  @message = message || @error_message || "An unexpected error occurred"
   erb :error
 end
 
@@ -26,24 +30,29 @@ def authorize!
       @tp = IMS::LTI::ToolProvider.new(nil, nil, params)
       @tp.lti_msg = "Your consumer didn't use a recognized key."
       @tp.lti_errorlog = "You did it wrong!"
-      return show_error "Consumer key wasn't recognized"
+      register_error "Consumer key wasn't recognized"
+      return false
     end
   else
-    return show_error "No consumer key"
+    register_error "No consumer key"
+    return false
   end
 
   if !@tp.valid_request?(request)
-    return show_error "The OAuth signature was invalid"
+    register_error "The OAuth signature was invalid"
+    return false
   end
 
   if Time.now.utc.to_i - @tp.request_oauth_timestamp.to_i > 60*60
-    return show_error "Your request is too old."
+    register_error "Your request is too old."
+    return false
   end
 
   # this isn't actually checking anything like it should, just want people
   # implementing real tools to be aware they need to check the nonce
   if was_nonce_used_in_last_x_minutes?(@tp.request_oauth_nonce, 60)
-    return show_error "Why are you reusing the nonce?"
+    register_error "Why are you reusing the nonce?"
+    return false
   end
 
   # save the launch parameters for use in later request
@@ -55,7 +64,7 @@ end
 # The url for launching the tool
 # It will verify the OAuth signature
 post '/lti_tool' do
-  authorize!
+  return show_error unless authorize!
 
   if @tp.outcome_service?
     # It's a launch for grading
@@ -90,12 +99,12 @@ post '/assessment' do
     erb :assessment_finished
   else
     @tp.lti_errormsg = "The Tool Consumer failed to add the score."
-    show_error "Your score was not recorded: #{res.description}"
+    return show_error "Your score was not recorded: #{res.description}"
   end
 end
 
 post '/content' do
-  authorize!
+  return show_error unless authorize!
 
   @tp.extend IMS::LTI::Extensions::Content::ToolProvider
 
