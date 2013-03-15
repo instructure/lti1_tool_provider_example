@@ -13,6 +13,14 @@
   <p>You don't have a role so I don't know what to do with you.</p>
 <% end %>
 
+<p>  Here are the params that were passed to the tool: </p>
+
+<p>
+  <% params.each do |k,v| %>
+    <b><%= k %>:</b> <%= v%><br>
+  <% end %>
+</p>
+
 <%= erb :_return_to_lms %>
 
 </body>
