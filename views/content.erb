@@ -6,7 +6,6 @@
   <% end %>
   <% if @tp.accepts_url? %>
     <li><a href="<%= @tp.url_content_return_url("#{@context_url}/public", "Public Page", "Public Page")%>">Url</a></li>
-    <li><a href="http://localhost:3000/external_content/success/external_tool?embed_type=url&url=http%3A%2F%2Flocalhost%3A4567%2Fpublic&text=Public+Page&target=_blank&title=Public+Page">Url embed</a></li>
   <% end %>
   <% if @tp.accepts_lti_launch_url? %>
     <li><a href="<%= @tp.lti_launch_content_return_url("#{@context_url}/lti_tool", "LTI Launch", "LTI Launch")%>">LTI Launch</a></li>
