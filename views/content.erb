@@ -1,24 +1,13 @@
 <html>
 <body>
 <ul>
-  <% if @tp.accepts_file? %>
-    <li><a href="<%= @tp.file_content_return_url("#{@context_url}/file.txt", "file", "text/plain")%>">File</a></li>
-  <% end %>
-  <% if @tp.accepts_url? %>
-    <li><a href="<%= @tp.url_content_return_url("#{@context_url}/public", "Public Page", "Public Page")%>">Url</a></li>
-  <% end %>
-  <% if @tp.accepts_lti_launch_url? %>
-    <li><a href="<%= @tp.lti_launch_content_return_url("#{@context_url}/lti_tool", "LTI Launch", "LTI Launch")%>">LTI Launch</a></li>
-  <% end %>
-  <% if @tp.accepts_image_url? %>
-    <li><a href="<%= @tp.image_content_return_url("#{@context_url}/fish.jpg", 260, 223, "Here fishy, fishy, fishy")%>">Image</a></li>
-  <% end %>
-  <% if @tp.accepts_iframe? %>
-    <li><a href="<%= @tp.iframe_content_return_url("#{@context_url}/public", 400, 400, "An iframe")%>">Iframe</a></li>
-  <% end %>
-  <% if @tp.accepts_oembed? %>
-    <li><a href="<%= @tp.oembed_content_return_url("#{@context_url}/video", "#{@context_url}/oembed")%>">oembed</a></li>
-  <% end %>
+  <li><%= (@tp.accepts_file?('text_file.txt') ? '' : '(unsupported) ')%><a href="<%= @tp.file_content_return_url("#{@context_url}/text_file.txt", "text_file.txt", "text/plain")%>">File (txt)</a></li>
+  <li><%= (@tp.accepts_file?('csv') ? '' : '(unsupported) ')%><a href="<%= @tp.file_content_return_url("#{@context_url}/csv_file.csv", "csv_file.csv", "text/plain")%>">File (csv)</a></li>
+  <li><%= (@tp.accepts_url? ? '' : '(unsupported) ')%><a href="<%= @tp.url_content_return_url("#{@context_url}/public", "Public Page", "Public Page")%>">Url</a></li>
+  <li><%= (@tp.accepts_lti_launch_url? ? '' : '(unsupported) ')%><a href="<%= @tp.lti_launch_content_return_url("#{@context_url}/lti_tool", "LTI Launch", "LTI Launch")%>">LTI Launch</a></li>
+  <li><%= (@tp.accepts_image_url? ? '' : '(unsupported) ')%><a href="<%= @tp.image_content_return_url("#{@context_url}/fish.jpg", 260, 223, "Here fishy, fishy, fishy")%>">Image</a></li>
+  <li><%= (@tp.accepts_iframe? ? '' : '(unsupported) ')%><a href="<%= @tp.iframe_content_return_url("#{@context_url}/public", 400, 400, "An iframe")%>">Iframe</a></li>
+  <li><%= (@tp.accepts_oembed? ? '' : '(unsupported) ')%><a href="<%= @tp.oembed_content_return_url("#{@context_url}/video", "#{@context_url}/oembed")%>">oembed</a></li>
 </ul>
 </body>
 </html>

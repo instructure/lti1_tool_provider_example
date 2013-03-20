@@ -154,7 +154,7 @@ get '/tool_config.xml' do
   tc.canvas_domain! request.host_with_port
   tc.canvas_text! "Content Extension Tool"
   tc.canvas_icon_url! "#{host}/selector.png"
-  tc.canvas_selector_dimensions! 300, 500
+  tc.canvas_selector_dimensions! 500, 500
   params = {:url => host + "/content"}
   tc.canvas_homework_submission! params
   tc.canvas_editor_button! params
