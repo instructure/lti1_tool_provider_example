@@ -155,10 +155,14 @@ get '/tool_config.xml' do
   tc.canvas_text! "Content Extension Tool"
   tc.canvas_icon_url! "#{host}/selector.png"
   tc.canvas_selector_dimensions! 500, 500
-  params = {:url => host + "/content"}
-  tc.canvas_homework_submission! params
-  tc.canvas_editor_button! params
-  tc.canvas_resource_selection! params
+  content_ext_params = {:url => host + "/content"}
+  tc.canvas_homework_submission! content_ext_params
+  tc.canvas_editor_button! content_ext_params
+  tc.canvas_resource_selection! content_ext_params
+  navigation_params = {:url => url}
+  tc.canvas_account_navigation! navigation_params
+  tc.canvas_course_navigation! navigation_params
+  tc.canvas_user_navigation! navigation_params
 
   headers 'Content-Type' => 'text/xml'
   tc.to_xml(:indent => 2)
