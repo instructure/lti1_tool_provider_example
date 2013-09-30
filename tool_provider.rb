@@ -85,13 +85,19 @@ post '/assessment' do
   end
 
   @tp = IMS::LTI::ToolProvider.new(key, $oauth_creds[key], session['launch_params'])
+  @tp.extend IMS::LTI::Extensions::OutcomeData::ToolProvider
 
   if !@tp.outcome_service?
     return show_error "This tool wasn't lunched as an outcome service"
   end
 
   # post the given score to the TC
-  res = @tp.post_replace_result!(params['score'])
+  score = (params['score'] != '' ? params['score'] : nil)
+  data = {}
+  data['url'] = params['url'] if params['url'] && params['url'] != ''
+  data['text'] = params['text'] if params['text'] && params['text'] != ''
+
+  res = @tp.post_replace_result_with_data!(score, data)
 
   if res.success?
     @score = params['score']
