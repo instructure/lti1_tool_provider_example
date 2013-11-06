@@ -62,6 +62,11 @@ post '/lti_tool' do
     erb :assessment
   else
     # normal tool launch without grade write-back
+    signature = OAuth::Signature.build(request, :consumer_secret => @tp.consumer_secret)
+
+    @signature_base_string = signature.signature_base_string
+    @secret = signature.send(:secret)
+
     @tp.lti_msg = "Sorry that tool was so boring"
     erb :boring_tool
   end
