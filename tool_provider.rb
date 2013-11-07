@@ -59,6 +59,8 @@ def authorize!
   session['launch_params'] = @tp.to_params
 
   @username = @tp.username("Dude")
+
+  return true
 end
 
 # The url for launching the tool
@@ -71,9 +73,57 @@ post '/lti_tool' do
     erb :assessment
   else
     # normal tool launch without grade write-back
+    signature = OAuth::Signature.build(request, :consumer_secret => @tp.consumer_secret)
+
+    @signature_base_string = signature.signature_base_string
+    @secret = signature.send(:secret)
+
     @tp.lti_msg = "Sorry that tool was so boring"
     erb :boring_tool
   end
+end
+
+post '/signature_test' do
+  erb :proxy_setup
+end
+
+post '/proxy_launch' do
+  uri = URI.parse(params['launch_url'])
+
+  if uri.port == uri.default_port
+    host = uri.host
+  else
+    host = "#{uri.host}:#{uri.port}"
+  end
+
+  consumer = OAuth::Consumer.new(params['lti']['oauth_consumer_key'], params['oauth_consumer_secret'], {
+      :site => "#{uri.scheme}://#{host}",
+      :signature_method => "HMAC-SHA1"
+  })
+
+  path = uri.path
+  path = '/' if path.empty?
+
+  @lti_params = params['lti'].clone
+  if uri.query != nil
+    CGI.parse(uri.query).each do |query_key, query_values|
+      unless @lti_params[query_key]
+        @lti_params[query_key] = query_values.first
+      end
+    end
+  end
+
+  path = uri.path
+  path = '/' if path.empty?
+
+  proxied_request = consumer.send(:create_http_request, :post, path, @lti_params)
+  signature = OAuth::Signature.build(proxied_request, :uri => params['launch_url'], :consumer_secret => params['oauth_consumer_secret'])
+
+  @signature_base_string = signature.signature_base_string
+  @secret = signature.send(:secret)
+  @oauth_signature = signature.signature
+
+  erb :proxy_launch
 end
 
 # post the assessment results
@@ -81,14 +131,16 @@ post '/assessment' do
   if session['launch_params']
     key = session['launch_params']['oauth_consumer_key']
   else
-    return show_error "The tool never launched"
+    show_error "The tool never launched"
+    return erb :error
   end
 
   @tp = IMS::LTI::ToolProvider.new(key, $oauth_creds[key], session['launch_params'])
   @tp.extend IMS::LTI::Extensions::OutcomeData::ToolProvider
 
   if !@tp.outcome_service?
-    return show_error "This tool wasn't lunched as an outcome service"
+    show_error "This tool wasn't lunched as an outcome service"
+    return erb :error
   end
 
   # post the given score to the TC
@@ -151,21 +203,30 @@ end
 
 get '/tool_config.xml' do
   host = request.scheme + "://" + request.host_with_port
+
   url = host + "/lti_tool"
+  content_ext_params = {:url => host + "/content"}
+  text = "Content Extension Tool"
+
+  if params['signature_proxy_test']
+    url = host + "/signature_test"
+    content_ext_params[:url] = url
+    text = "LTI Signature Verifier"
+  end
+
+  navigation_params = {:url => url}
 
   tc = IMS::LTI::ToolConfig.new(:title => "Example Sinatra Tool Provider", :launch_url => url)
   tc.description = "This example LTI Tool Provider supports LIS Outcome pass-back and the content extension."
   tc.extend IMS::LTI::Extensions::Canvas::ToolConfig
   tc.canvas_privacy_public!
   tc.canvas_domain! request.host_with_port
-  tc.canvas_text! "Content Extension Tool"
+  tc.canvas_text! text
   tc.canvas_icon_url! "#{host}/selector.png"
   tc.canvas_selector_dimensions! 500, 500
-  content_ext_params = {:url => host + "/content"}
   tc.canvas_homework_submission! content_ext_params
   tc.canvas_editor_button! content_ext_params
   tc.canvas_resource_selection! content_ext_params
-  navigation_params = {:url => url}
   tc.canvas_account_navigation! navigation_params
   tc.canvas_course_navigation! navigation_params
   tc.canvas_user_navigation! navigation_params
