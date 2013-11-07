@@ -98,6 +98,7 @@ post '/proxy_launch' do
 
   path = uri.path
   path = '/' if path.empty?
+
   @lti_params = params['lti'].clone
   if uri.query != nil
     CGI.parse(uri.query).each do |query_key, query_values|
@@ -107,39 +108,16 @@ post '/proxy_launch' do
     end
   end
 
-  options = {
-      :scheme           => 'body',
-      :timestamp        => params['lti']['oauth_timestamp'],
-      :nonce            => params['lti']['oauth_nonce'],
-  }
-
   path = uri.path
   path = '/' if path.empty?
 
-  signed_request = consumer.create_signed_request(:post, path, nil, options, @lti_params)
+  proxied_request = consumer.send(:create_http_request, :post, path, @lti_params)
+  signature = OAuth::Signature.build(proxied_request, :uri => params['launch_url'], :consumer_secret => params['oauth_consumer_secret'])
 
-  signed_request_params = {}
-  signed_request.body.split(/&/).each do |param|
-    key, val = param.split(/=/).map{|v| CGI.unescape(v) }
-    signed_request_params[key] = val
-  end
-
-  signature = OAuth::Signature.build(signed_request, :consumer_secret => params['oauth_consumer_secret'])
-  @signature_base_string = consumer.signature_base_string(signed_request)
+  @signature_base_string = signature.signature_base_string
   @secret = signature.send(:secret)
-  @oauth_signature = signed_request_params['oauth_signature']
+  @oauth_signature = signature.signature
 
-  #
-  #
-  #require 'pry'
-  #binding.pry
-  #
-  #oauth_consumer_secret = request.env['rack.request.form_hash'].delete('oauth_consumer_secret')
-  #lti_request = Net::HTTP::Post.new(params['launch_url'])
-  #signature = OAuth::Signature.build(request, :consumer_secret => oauth_consumer_secret)
-  #@signature_base_string = signature.signature_base_string
-  #@secret = signature.send(:secret)
-  #@oauth_signature = signature.signature
   erb :proxy_launch
 end
 
