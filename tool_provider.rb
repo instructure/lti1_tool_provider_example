@@ -219,6 +219,22 @@ get '/tool_config.xml' do
   tc = IMS::LTI::ToolConfig.new(:title => "Example Sinatra Tool Provider", :launch_url => url)
   tc.description = "This example LTI Tool Provider supports LIS Outcome pass-back and the content extension."
   tc.extend IMS::LTI::Extensions::Canvas::ToolConfig
+  tc.set_custom_param('Canvas.api.domain', '$Canvas.api.domain')
+  tc.set_custom_param('Canvas.assignment.id', '$Canvas.assignment.id')
+  tc.set_custom_param('Canvas.assignment.title','$Canvas.assignment.title')
+  tc.set_custom_param('Canvas.assignment.points_possible', '$Canvas.assignment.points_possible')
+  tc.set_custom_param('Canvas.context.id', '$Canvas.context.id')
+  tc.set_custom_param('Canvas.context.sis_source_id', '$Canvas.context.sis_source_id')
+  tc.set_custom_param('Canvas.enrollment.enrollment_state', '$Canvas.enrollment.enrollment_state')
+  tc.set_custom_param('Canvas.membership.concluded_roles', '$Canvas.membership.concluded_roles')
+  tc.set_custom_param('Canvas.user.id', '$Canvas.user.id')
+  tc.set_custom_param('Canvas.user.login_id', '$Canvas.user.login_id')
+
+  tc.set_custom_param('Person.name.full', '$Person.name.full')
+  tc.set_custom_param('Person.name.family', '$Person.name.family')
+  tc.set_custom_param('Person.name.given', '$Person.name.given')
+  tc.set_custom_param('Person.address.timezone', '$Person.address.timezone')
+
   tc.canvas_privacy_public!
   tc.canvas_domain! request.host_with_port
   tc.canvas_text! text
