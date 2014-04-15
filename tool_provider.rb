@@ -55,9 +55,6 @@ def authorize!
     return false
   end
 
-  # save the launch parameters for use in later request
-  session['launch_params'] = @tp.to_params
-
   @username = @tp.username("Dude")
 
   return true
@@ -128,14 +125,15 @@ end
 
 # post the assessment results
 post '/assessment' do
-  if session['launch_params']
-    key = session['launch_params']['oauth_consumer_key']
+  launch_params = request['launch_params']
+  if launch_params
+    key = launch_params['oauth_consumer_key']
   else
     show_error "The tool never launched"
     return erb :error
   end
 
-  @tp = IMS::LTI::ToolProvider.new(key, $oauth_creds[key], session['launch_params'])
+  @tp = IMS::LTI::ToolProvider.new(key, $oauth_creds[key], launch_params)
   @tp.extend IMS::LTI::Extensions::OutcomeData::ToolProvider
 
   if !@tp.outcome_service?

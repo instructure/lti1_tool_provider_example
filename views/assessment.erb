@@ -9,6 +9,9 @@
       <div>Url: <input name='url' /></div>
       <div>Text: <textarea name='text'></textarea></div>
       <div><input type='submit' value='Submit' /></div>
+      <% @tp.to_params.each do |key, value| %>
+        <input type="hidden" name="launch_params[<%= key %>]" value="<%= value %>" />
+      <% end%>
     </form>
   </body>
 </html>
