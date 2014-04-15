@@ -251,6 +251,8 @@ get '/tool_config.xml' do
   tc.canvas_course_navigation! navigation_params
   tc.canvas_user_navigation! navigation_params
 
+  tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :migration_selection, content_ext_params)
+
   headers 'Content-Type' => 'text/xml'
   tc.to_xml(:indent => 2)
 end
