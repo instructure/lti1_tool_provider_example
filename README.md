@@ -1,4 +1,4 @@
-# Example LTI Tool Provider Using imt-lti Gem
+# Example LTI Tool Provider Using ims-lti Gem
 
 This is a basic and simple LTI Tool Provider that uses the
 [ims-lti](https://github.com/instructure/ims-lti) gem.
