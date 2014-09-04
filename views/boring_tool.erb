@@ -4,6 +4,7 @@
   <title>Demo LTI Tool</title>
 </head>
 <body>
+
 <p>Hi, <%= @username %>, this is an LTI tool. I hope you learned a lot.</p>
 <% if @tp.instructor? %>
   <p>You are a teacher, so you could configure this tool now if it were cool enough to have configurations.</p>
@@ -18,29 +19,7 @@
 
 <p>  Here are the params that were passed to the tool: </p>
 
-<p>
-  <% params.each do |k,v| %>
-    <b><%= k %>:</b> <%= v%><br>
-  <% end %>
-</p>
-
-<p>
-  These are the two parts that are used to sign the request.  The signature is
-  calculated using <%= params['oauth_signature_method'] %>, and then it
-  is encoded to base64.
-</p>
-
-
-<p>
-  <b>signature_base_string</b><br>
-  <textarea style="width: 100%; height: 150px" readonly="readonly"><%= @signature_base_string %></textarea>
-</p>
-
-<p>
-  <b>secret</b><br>
-  <textarea rows="1" style="width: 100%" readonly="readonly"><%= @secret %></textarea>
-</p>
-
+<%= erb :_params_table %>
 <%= erb :_return_to_lms %>
 
 </body>
