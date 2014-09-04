@@ -217,25 +217,32 @@ get '/tool_config.xml' do
   tc = IMS::LTI::ToolConfig.new(:title => "Example Sinatra Tool Provider", :launch_url => url)
   tc.description = "This example LTI Tool Provider supports LIS Outcome pass-back and the content extension."
   tc.extend IMS::LTI::Extensions::Canvas::ToolConfig
+
   tc.set_custom_param('sub_canvas_api_domain', '$Canvas.api.domain')
-  tc.set_custom_param('sub_canvas_assignment_id', '$Canvas.assignment.id')
-  tc.set_custom_param('sub_canvas_assignment_title','$Canvas.assignment.title')
-  tc.set_custom_param('sub_canvas_assignment_points_possible', '$Canvas.assignment.pointsPossible')
+  tc.set_custom_param('sub_canvas_xapi_url', '$Canvas.xapi.url')
   tc.set_custom_param('sub_canvas_account_id', '$Canvas.account.id')
+  tc.set_custom_param('sub_canvas_account_name', '$Canvas.account.name')
+  tc.set_custom_param('sub_canvas_account_sis_sourceId', '$Canvas.account.sisSourceId')
+  tc.set_custom_param('sub_canvas_root_account.id', '$Canvas.root_account.id')
+  tc.set_custom_param('sub_canvas_root_account_sis_source_id', '$Canvas.root_account.sisSourceId')
   tc.set_custom_param('sub_canvas_course_id', '$Canvas.course.id')
-  tc.set_custom_param('sub_canvas_user_id', '$Canvas.user.id')
-  tc.set_custom_param('sub_canvas_account_sis_source_id', '$Canvas.account.sisSourceId')
   tc.set_custom_param('sub_canvas_course_sis_source_id', '$Canvas.course.sisSourceId')
-  tc.set_custom_param('sub_canvas_user_sis_source_id', '$Canvas.user.sisSourceId')
   tc.set_custom_param('sub_canvas_enrollment_enrollment_state', '$Canvas.enrollment.enrollmentState')
+  tc.set_custom_param('sub_canvas_membership_roles', '$Canvas.membership.roles')
   tc.set_custom_param('sub_canvas_membership_concluded_roles', '$Canvas.membership.concludedRoles')
   tc.set_custom_param('sub_canvas_user_id', '$Canvas.user.id')
+  tc.set_custom_param('sub_canvas_user_sis_source_id', '$Canvas.user.sisSourceId')
   tc.set_custom_param('sub_canvas_user_login_id', '$Canvas.user.loginId')
-
   tc.set_custom_param('sub_person_name_full', '$Person.name.full')
   tc.set_custom_param('sub_person_name_family', '$Person.name.family')
   tc.set_custom_param('sub_person_name_given', '$Person.name.given')
+  tc.set_custom_param('sub_person_email_primary', '$Person.email.primary')
   tc.set_custom_param('sub_person_address_timezone', '$Person.address.timezone')
+  tc.set_custom_param('sub_user_image', '$User.image')
+
+  tc.set_custom_param('sub_canvas_assignment_id', '$Canvas.assignment.id')
+  tc.set_custom_param('sub_canvas_assignment_title','$Canvas.assignment.title')
+  tc.set_custom_param('sub_canvas_assignment_points_possible', '$Canvas.assignment.pointsPossible')
 
   tc.canvas_privacy_public!
   tc.canvas_domain! request.host_with_port
