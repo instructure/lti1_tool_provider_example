@@ -18,7 +18,12 @@
 <% end %>
 
 <p>  Here are the params that were passed to the tool: </p>
-
+<script type="text/javascript" src="/js/iframeResizer.contentWindow.min.js"></script>
+<script type="text/javascript">
+    if ('parentIFrame' in window){
+        window.parentIFrame.size(window.height, window.width)
+    }
+</script>
 <%= erb :_params_table %>
 <%= erb :_return_to_lms %>
 
