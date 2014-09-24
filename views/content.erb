@@ -8,7 +8,8 @@
   <li><%= (@tp.accepts_url? ? '' : '(unsupported) ')%><a href="<%= @tp.url_content_return_url("#{@context_url}/public", "Public Page", "Public Page")%>">Url</a></li>
   <li><%= (@tp.accepts_lti_launch_url? ? '' : '(unsupported) ')%><a href="<%= @tp.lti_launch_content_return_url("#{@context_url}/lti_tool", "LTI Launch", "LTI Launch")%>">LTI Launch</a></li>
   <li><%= (@tp.accepts_image_url? ? '' : '(unsupported) ')%><a href="<%= @tp.image_content_return_url("#{@context_url}/fish.jpg", 260, 223, "Here fishy, fishy, fishy")%>">Image</a></li>
-  <li><%= (@tp.accepts_iframe? ? '' : '(unsupported) ')%><a href="<%= @tp.iframe_content_return_url("#{@context_url}/public", 400, 400, "An iframe")%>">Iframe</a></li>
+  <li><%= (@tp.accepts_iframe? ? '' : '(unsupported) ')%><a href="<%= @tp.iframe_content_return_url("#{@context_url}/public", 400, 400, "An iframe")%>">iframe</a></li>
+  <li><%= (@tp.accepts_iframe? ? '' : '(unsupported) ')%><a href="<%= @tp.iframe_content_return_url("//www.youtube.com/embed/cRU9BT9M9Iw", 400, 400, "An iframed video")%>">iframed Video</a></li>
   <li><%= (@tp.accepts_oembed? ? '' : '(unsupported) ')%><a href="<%= @tp.oembed_content_return_url("#{@context_url}/video", "#{@context_url}/oembed")%>">oembed</a></li>
 </ul>
 </body>
