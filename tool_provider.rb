@@ -2,6 +2,8 @@ require 'sinatra'
 require 'ims/lti'
 # must include the oauth proxy object
 require 'oauth/request_proxy/rack_request'
+require 'uuid'
+require 'json'
 
 enable :sessions
 set :protection, :except => :frame_options
@@ -70,6 +72,10 @@ end
 # It will verify the OAuth signature
 post '/lti_tool' do
   return show_error unless authorize!
+
+  if @tp.get_custom_param('sub_canvas_xapi_url')
+    @xapi_url = "/xapi?key=#{params['oauth_consumer_key']}&xapi_url=#{@tp.get_custom_param('sub_canvas_xapi_url')}"
+  end
 
   if @tp.outcome_service?
     # It's a launch for grading
@@ -160,16 +166,70 @@ post '/assessment' do
   end
 end
 
+get '/xapi' do
+  key = params['key']
+  xapi_url = params['xapi_url']
+
+  unless key && xapi_url
+    return show_error("The need key and callback url")
+  end
+
+  @tp = IMS::LTI::ToolProvider.new(key, $oauth_creds[key], {})
+  @tp.extend IMS::LTI::Extensions::OutcomeData::ToolProvider
+
+
+  # generate the json body
+  body = {
+          id: UUID.new,
+          actor: {
+                  account: {
+                          homePage: context_url,
+                          name: 'Test LTI tool of glory'
+                  }
+          },
+          verb: {
+                  id: "http://adlnet.gov/expapi/verbs/interacted",
+                  display: {
+                          "en-US" => "interacted"
+                  }
+          },
+          object: {
+                  id: context_url
+          },
+          result: {
+                  duration: "PT5M30S"
+          }
+  }
+
+  res = @tp.post_service_request(
+          xapi_url,
+          'application/json',
+          body.to_json)
+
+  if res.code == '200'
+    @tp.lti_msg = "Message shown when arriving back at Tool Consumer."
+    erb :xapi_finished
+  else
+    @tp.lti_errormsg = "The Tool Consumer failed to add the activity."
+    return show_error "Your activity was not recorded: #{res.description}"
+  end
+
+end
+
 post '/content' do
   return show_error unless authorize!
 
   @tp.extend IMS::LTI::Extensions::Content::ToolProvider
 
-  url_scheme = request.ssl? ? "https" : "http"
-  domain = request.env['SERVER_NAME']
-  @context_url = "#{url_scheme}://#{request.env['HTTP_HOST']}"
+  @context_url = context_url
 
   erb :content
+end
+
+def context_url
+  url_scheme = request.ssl? ? "https" : "http"
+  domain = request.env['SERVER_NAME']
+  "#{url_scheme}://#{request.env['HTTP_HOST']}"
 end
 
 get '/public' do

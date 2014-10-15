@@ -5,6 +5,9 @@
 </head>
 <body>
 <p>Your assessment was successfully sent to <%= @tp.tool_consumer_instance_name || "your LMS" %></p>
+<% if @xapi_url%>
+  <p>woah, you can do xAPI, click here to log 5 minutes of activity: <a href="<%= @xapi_url %>">Log it!</a></p>
+<% end %>
 <%= erb :_return_to_lms %>
 </body>
 </html>

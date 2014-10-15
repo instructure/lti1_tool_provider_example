@@ -17,6 +17,10 @@
   <p>You don't have a role so I don't know what to do with you.</p>
 <% end %>
 
+<% if @xapi_url%>
+  <p>woah, you can do xAPI, click here to log 5 minutes of activity: <a href="<%= @xapi_url %>">Log it!</a></p>
+<% end %>
+
 <p>  Here are the params that were passed to the tool: </p>
 <script type="text/javascript" src="/js/iframeResizer.contentWindow.min.js"></script>
 <script type="text/javascript">
