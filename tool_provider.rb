@@ -74,7 +74,7 @@ post '/lti_tool' do
   return show_error unless authorize!
 
   if @tp.get_custom_param('sub_canvas_xapi_url')
-    @xapi_url = "/xapi?key=#{params['oauth_consumer_key']}&xapi_url=#{@tp.get_custom_param('sub_canvas_xapi_url')}"
+    @xapi_url = "/xapi?key=#{params['oauth_consumer_key']}&user_id=#{@tp.user_id}&xapi_url=#{@tp.get_custom_param('sub_canvas_xapi_url')}"
   end
 
   if @tp.outcome_service?
@@ -169,6 +169,7 @@ end
 get '/xapi' do
   key = params['key']
   xapi_url = params['xapi_url']
+  user_id = params['user_id']
 
   unless key && xapi_url
     return show_error("The need key and callback url")
@@ -184,7 +185,7 @@ get '/xapi' do
           actor: {
                   account: {
                           homePage: context_url,
-                          name: 'Test LTI tool of glory'
+                          name: user_id
                   }
           },
           verb: {
