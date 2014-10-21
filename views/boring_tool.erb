@@ -21,13 +21,22 @@
   <p>woah, you can do xAPI, click here to log 5 minutes of activity: <a href="<%= @xapi_url %>">Log it!</a></p>
 <% end %>
 
-<p>  Here are the params that were passed to the tool: </p>
-<script type="text/javascript" src="/js/iframeResizer.contentWindow.min.js"></script>
-<script type="text/javascript">
-    if ('parentIFrame' in window){
-        window.parentIFrame.size(window.height, window.width)
-    }
+<p>Try resizing the tool <br /> height: <input id="frame_height" /><button id="resize">resize</button></p>
+<script>
+  document.getElementById('resize').addEventListener("click", function(){
+    var height = document.getElementById('frame_height').value;
+    var default_height = Math.max(
+        document.body.scrollHeight, document.body.offsetHeight,
+        document.documentElement.clientHeight, document.documentElement.scrollHeight,
+        document.documentElement.offsetHeight);
+    parent.postMessage(JSON.stringify({
+      subject: 'lti.frameResize',
+      height: isNaN(height) || Number(height) == 0 ? default_height : height
+    }), '*');
+  });
 </script>
+
+<p>  Here are the params that were passed to the tool: </p>
 <%= erb :_params_table %>
 <%= erb :_return_to_lms %>
 
