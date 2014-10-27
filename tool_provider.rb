@@ -276,7 +276,7 @@ get '/tool_config.xml' do
 
   navigation_params = {:url => url}
 
-  tc = IMS::LTI::ToolConfig.new(:title => "Example Sinatra Tool Provider", :launch_url => url)
+  tc = IMS::LTI::ToolConfig.new(:title => "Test Tool Provider", :launch_url => url)
   tc.description = "This example LTI Tool Provider supports LIS Outcome pass-back and the content extension."
   tc.extend IMS::LTI::Extensions::Canvas::ToolConfig
 
@@ -319,6 +319,15 @@ get '/tool_config.xml' do
   tc.canvas_user_navigation! navigation_params
 
   tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :migration_selection, content_ext_params)
+  tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :global_navigation, navigation_params)
+  tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :course_home_sub_navigation, navigation_params)
+
+  content_response_params = navigation_params.merge(message_type: 'ContentItemSelectionResponse')
+  tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :quiz_menu, content_response_params)
+  tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :module_menu, content_response_params)
+  tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :assignment_menu, content_response_params)
+  tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :discussion_menu, content_response_params)
+  tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :course_settings_sub_navigation, content_response_params)
 
   headers 'Content-Type' => 'text/xml'
   tc.to_xml(:indent => 2)
