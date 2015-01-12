@@ -148,13 +148,13 @@ post '/assessment' do
     return erb :error
   end
 
-  # post the given score to the TC
-  score = (params['score'] != '' ? params['score'] : nil)
   data = {}
+  data['score'] = params['score'] if params['score'] && params['score'] != ''
+  data['total_score'] = params['total_score'] if params['total_score'] && params['total_score'] != ''
   data['url'] = params['url'] if params['url'] && params['url'] != ''
   data['text'] = params['text'] if params['text'] && params['text'] != ''
 
-  res = @tp.post_replace_result_with_data!(score, data)
+  res = @tp.post_extended_replace_result!(data)
 
   if res.success?
     @score = params['score']
