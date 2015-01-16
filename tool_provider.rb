@@ -83,6 +83,7 @@ post '/lti_tool' do
 
   if @tp.outcome_service?
     # It's a launch for grading
+    @tp.extend IMS::LTI::Extensions::OutcomeData::ToolProvider
     erb :assessment
   else
     # normal tool launch without grade write-back
