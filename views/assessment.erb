@@ -5,7 +5,19 @@
     <form action="/assessment" method="post">
       <p>Hi, <%= @username %>. On a scale of <code>0.0</code> to <code>1.0</code>, how well would you say you did on this assessment?</p>
       <input name='score' type='text' width='5' id='score' />
-      <input type='submit' value='Submit' />
+
+      <% if @tp.accepts_outcome_result_total_score? %>
+        <p>Or, you can send a raw score that can be an integer or float:</p>
+        <input name='total_score' type='text' width='5' id='total_score' />
+      <% end %>
+
+      <% if @tp.accepts_outcome_data? %>
+        <p>You may also submit some content</p>
+        <div>Url: <input name='url' /></div>
+        <div>Text: <textarea name='text'></textarea></div>
+      <% end %>
+
+      <div><input type='submit' value='Submit' /></div>
       <% @tp.to_params.each do |key, value| %>
         <input type="hidden" name="launch_params[<%= key %>]" value="<%= value %>" />
       <% end%>

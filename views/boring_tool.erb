@@ -4,7 +4,9 @@
   <title>Demo LTI Tool</title>
 </head>
 <body>
+
 <p>Hi, <%= @username %>, this is an LTI tool. I hope you learned a lot.</p>
+
 <% if @tp.instructor? %>
   <p>You are a teacher, so you could configure this tool now if it were cool enough to have configurations.</p>
   <p>If you come back as a student you may get to take a test.</p>
@@ -16,31 +18,34 @@
   <p>You don't have a role so I don't know what to do with you.</p>
 <% end %>
 
-<p>  Here are the params that were passed to the tool: </p>
-
-<p>
-  <% params.each do |k,v| %>
-    <b><%= k %>:</b> <%= v%><br>
+<% if @xapi_url || @caliper_url %>
+  <h2>Analytics Events</h2>
+  <% if @xapi_url%>
+    <p>xAPI: click here to log 5 minutes of activity: <a href="<%= @xapi_url %>">Log it!</a></p>
   <% end %>
-</p>
 
-<p>
-  These are the two parts that are used to sign the request.  The signature is
-  calculated using <%= params['oauth_signature_method'] %>, and then it
-  is encoded to base64.
-</p>
+  <% if @caliper_url%>
+    <p>Caliper: click here to log 5 minutes of activity: <a href="<%= @caliper_url %>">Log it!</a></p>
+  <% end %>
+<% end %>
 
+<p>Try resizing the tool <br /> height: <input id="frame_height" /><button id="resize">resize</button></p>
+<script>
+  document.getElementById('resize').addEventListener("click", function(){
+    var height = document.getElementById('frame_height').value;
+    var default_height = Math.max(
+        document.body.scrollHeight, document.body.offsetHeight,
+        document.documentElement.clientHeight, document.documentElement.scrollHeight,
+        document.documentElement.offsetHeight);
+    parent.postMessage(JSON.stringify({
+      subject: 'lti.frameResize',
+      height: isNaN(height) || Number(height) == 0 ? default_height : height
+    }), '*');
+  });
+</script>
 
-<p>
-  <b>signature_base_string</b><br>
-  <textarea style="width: 100%; height: 150px" readonly="readonly"><%= @signature_base_string %></textarea>
-</p>
-
-<p>
-  <b>secret</b><br>
-  <textarea rows="1" style="width: 100%" readonly="readonly"><%= @secret %></textarea>
-</p>
-
+<p>  Here are the params that were passed to the tool: </p>
+<%= erb :_params_table %>
 <%= erb :_return_to_lms %>
 
 </body>

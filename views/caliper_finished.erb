@@ -1,0 +1,15 @@
+<html>
+<head>
+  <title>Finished caliper callback</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+</head>
+<body>
+<p>Your activity was successfully sent to <%= @tp.tool_consumer_instance_name || "your LMS" %></p>
+<%= erb :_return_to_lms %>
+
+<p>This is the json that was sent:</p>
+<pre>
+  <%= JSON.pretty_generate(@body) %>
+</pre>
+</body>
+</html>
