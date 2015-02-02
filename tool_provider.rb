@@ -77,6 +77,10 @@ post '/lti_tool' do
     @xapi_url = "/xapi?key=#{params['oauth_consumer_key']}&user_id=#{@tp.user_id}&xapi_url=#{@tp.get_custom_param('sub_canvas_xapi_url')}"
   end
 
+  if @tp.get_custom_param('sub_canvas_caliper_url')
+    @caliper_url = "/caliper?key=#{params['oauth_consumer_key']}&user_id=#{@tp.user_id}&caliper_url=#{@tp.get_custom_param('sub_canvas_caliper_url')}"
+  end
+
   if @tp.outcome_service?
     # It's a launch for grading
     erb :assessment
@@ -180,7 +184,7 @@ get '/xapi' do
 
 
   # generate the json body
-  body = {
+  @body = {
           id: UUID.new,
           actor: {
                   account: {
@@ -205,11 +209,64 @@ get '/xapi' do
   res = @tp.post_service_request(
           xapi_url,
           'application/json',
-          body.to_json)
+          @body.to_json)
 
   if res.code == '200'
     @tp.lti_msg = "Message shown when arriving back at Tool Consumer."
     erb :xapi_finished
+  else
+    @tp.lti_errormsg = "The Tool Consumer failed to add the activity."
+    return show_error "Your activity was not recorded: #{res.description}"
+  end
+
+end
+
+get '/caliper' do
+  key = params['key']
+  caliper_url = params['caliper_url']
+  user_id = params['user_id']
+
+  unless key && caliper_url
+    return show_error("The need key and callback url")
+  end
+
+  @tp = IMS::LTI::ToolProvider.new(key, $oauth_creds[key], {})
+  @tp.extend IMS::LTI::Extensions::OutcomeData::ToolProvider
+
+
+  # generate the json body
+  @body = {
+          "@context" => "http://purl.imsglobal.org/ctx/caliper/v1/ViewEvent",
+          "@type" => "http://purl.imsglobal.org/caliper/v1/ViewEvent",
+          "action" => "viewed",
+          "startedAtTime" => Time.now.utc.to_i,
+          "duration" => "PT5M30S",
+          "actor" => {
+                  "@id" => user_id,
+                  "@type" => "http://purl.imsglobal.org/caliper/v1/lis/Person"
+          },
+          "object" => {
+                  "@id" => context_url,
+                  "@type" => "http://www.idpf.org/epub/vocab/structure/#volume",
+                  "name" => "Test LTI Tool"
+          },
+          "edApp" => {
+                  "@id" => context_url,
+                  "@type" => "http://purl.imsglobal.org/caliper/v1/SoftwareApplication",
+                  "name" => "LTI Tool of All Things",
+                  "properties" => {},
+                  "lastModifiedTime" => Time.now.utc.to_i
+          }
+  }
+
+  res = @tp.post_service_request(
+          caliper_url,
+          'application/json',
+          @body.to_json)
+
+  if res.code == '200'
+    @tp.lti_msg = "Message shown when arriving back at Tool Consumer."
+    erb :caliper_finished
   else
     @tp.lti_errormsg = "The Tool Consumer failed to add the activity."
     return show_error "Your activity was not recorded: #{res.description}"
@@ -282,6 +339,7 @@ get '/tool_config.xml' do
 
   tc.set_custom_param('sub_canvas_api_domain', '$Canvas.api.domain')
   tc.set_custom_param('sub_canvas_xapi_url', '$Canvas.xapi.url')
+  tc.set_custom_param('sub_canvas_caliper_url', '$Canvas.caliper.url')
   tc.set_custom_param('sub_canvas_account_id', '$Canvas.account.id')
   tc.set_custom_param('sub_canvas_account_name', '$Canvas.account.name')
   tc.set_custom_param('sub_canvas_account_sis_sourceId', '$Canvas.account.sisSourceId')
