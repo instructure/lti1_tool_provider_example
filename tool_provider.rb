@@ -360,6 +360,14 @@ get '/tool_config.xml' do
   tc.set_custom_param('sub_person_email_primary', '$Person.email.primary')
   tc.set_custom_param('sub_person_address_timezone', '$Person.address.timezone')
   tc.set_custom_param('sub_user_image', '$User.image')
+  tc.set_custom_param('sub_canvas_file_media_id', '$Canvas.file.media.id')
+  tc.set_custom_param('sub_canvas_file_media_type', '$Canvas.file.media.type')
+  tc.set_custom_param('sub_canvas_file_media_duration', '$Canvas.file.media.duration')
+  tc.set_custom_param('sub_canvas_file_media_size', '$Canvas.file.media.size')
+  tc.set_custom_param('sub_canvas_file_media_title', '$Canvas.file.media.title')
+  tc.set_custom_param('sub_canvas_file_usage_rights_name', '$Canvas.file.usageRights.name')
+  tc.set_custom_param('sub_canvas_file_usage_rights_url', '$Canvas.file.usageRights.url')
+  tc.set_custom_param('sub_canvas_file_usage_rights_copyright_text', '$Canvas.file.usageRights.copyrightText')
 
   tc.set_custom_param('sub_canvas_assignment_id', '$Canvas.assignment.id')
   tc.set_custom_param('sub_canvas_assignment_title','$Canvas.assignment.title')
@@ -387,6 +395,7 @@ get '/tool_config.xml' do
   tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :assignment_menu, content_response_params)
   tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :discussion_menu, content_response_params)
   tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :course_settings_sub_navigation, content_response_params)
+  tc.set_ext_param(IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM, :file_menu, content_response_params)
 
   headers 'Content-Type' => 'text/xml'
   tc.to_xml(:indent => 2)
