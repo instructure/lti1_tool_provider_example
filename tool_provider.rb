@@ -77,7 +77,9 @@ post '/lti_tool' do
     @xapi_url = "/xapi?key=#{params['oauth_consumer_key']}&user_id=#{@tp.user_id}&xapi_url=#{@tp.get_custom_param('sub_canvas_xapi_url')}"
   end
 
-  if @tp.get_custom_param('sub_canvas_caliper_url')
+  if @tp.get_custom_param('caliper_service_url')
+    @caliper_url = "/caliper?key=#{params['oauth_consumer_key']}&user_id=#{@tp.user_id}&caliper_url=#{@tp.get_custom_param('caliper_service_url')}"
+  elsif @tp.get_custom_param('sub_canvas_caliper_url')
     @caliper_url = "/caliper?key=#{params['oauth_consumer_key']}&user_id=#{@tp.user_id}&caliper_url=#{@tp.get_custom_param('sub_canvas_caliper_url')}"
   end
 
@@ -341,6 +343,7 @@ get '/tool_config.xml' do
   tc.set_custom_param('sub_canvas_api_domain', '$Canvas.api.domain')
   tc.set_custom_param('sub_canvas_xapi_url', '$Canvas.xapi.url')
   tc.set_custom_param('sub_canvas_caliper_url', '$Canvas.caliper.url')
+  tc.set_custom_param('caliper_service_url', '$Caliper.url')
   tc.set_custom_param('sub_canvas_account_id', '$Canvas.account.id')
   tc.set_custom_param('sub_canvas_account_name', '$Canvas.account.name')
   tc.set_custom_param('sub_canvas_account_sis_sourceId', '$Canvas.account.sisSourceId')
