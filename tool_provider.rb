@@ -176,8 +176,8 @@ get '/xapi' do
   xapi_url = params['xapi_url']
   user_id = params['user_id']
 
-  unless key && xapi_url
-    return show_error("The need key and callback url")
+  unless key && xapi_url && !xapi_url.start_with?('$')
+    return show_error("Key and callback url are required")
   end
 
   @tp = IMS::LTI::ToolProvider.new(key, $oauth_creds[key], {})
@@ -227,8 +227,8 @@ get '/caliper' do
   caliper_url = params['caliper_url']
   user_id = params['user_id']
 
-  unless key && caliper_url
-    return show_error("The need key and callback url")
+  unless key && caliper_url && !caliper_url.start_with?('$')
+    return show_error("Key and callback url are required")
   end
 
   @tp = IMS::LTI::ToolProvider.new(key, $oauth_creds[key], {})
