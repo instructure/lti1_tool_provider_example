@@ -4,6 +4,7 @@ require 'ims/lti'
 require 'oauth/request_proxy/rack_request'
 require 'uuid'
 require 'json'
+require 'erubis'
 
 enable :sessions
 set :protection, :except => :frame_options

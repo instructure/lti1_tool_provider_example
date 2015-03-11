@@ -3,8 +3,8 @@
   <tbody>
   <% params.keys.sort.each do |key| %>
     <tr>
-      <td style="width: 20%;" nowrap="nowrap"><%= key %></td>
-      <td><%= params[key] %></td>
+      <td style="width: 20%;" nowrap="nowrap"><%== key %></td>
+      <td><%== params[key] %></td>
     </tr>
   <% end %>
   </tbody>
