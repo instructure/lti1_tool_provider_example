@@ -12,6 +12,7 @@ GEM
   specs:
     builder (3.2.2)
     coderay (1.1.0)
+    erubis (2.7.0)
     json (1.8.2)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
@@ -40,6 +41,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  erubis (= 2.7.0)
   ims-lti!
   json
   pry
