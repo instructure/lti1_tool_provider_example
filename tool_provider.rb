@@ -4,6 +4,7 @@ require 'ims/lti'
 require 'oauth/request_proxy/rack_request'
 require 'uuid'
 require 'json'
+require 'erubis'
 
 enable :sessions
 set :protection, :except => :frame_options
@@ -372,6 +373,9 @@ get '/tool_config.xml' do
   tc.set_custom_param('sub_canvas_assignment_id', '$Canvas.assignment.id')
   tc.set_custom_param('sub_canvas_assignment_title','$Canvas.assignment.title')
   tc.set_custom_param('sub_canvas_assignment_points_possible', '$Canvas.assignment.pointsPossible')
+  tc.set_custom_param('sub_canvas_assignment_unlock_date', '$Canvas.assignment.unlockAt')
+  tc.set_custom_param('sub_canvas_assignment_lock_at', '$Canvas.assignment.lockAt')
+  tc.set_custom_param('sub_canvas_assignment_due_at', '$Canvas.assignment.dueAt')
 
   tc.canvas_privacy_public!
   tc.canvas_domain! request.host_with_port
