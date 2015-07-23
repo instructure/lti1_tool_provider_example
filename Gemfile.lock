@@ -1,32 +1,26 @@
 GIT
   remote: https://github.com/instructure/ims-lti.git
-  revision: 8237787699d2ba4b360324329f93c530890d5c9a
+  revision: 086b6152e49dfa50921f7d9fdfee2dfe8f3c8dca
   specs:
-    ims-lti (1.1.2)
+    ims-lti (1.1.8)
       builder
       oauth (~> 0.4.5)
-      uuid
 
 GEM
   remote: https://rubygems.org/
   specs:
-    builder (3.2.0)
-    macaddr (1.6.1)
-      systemu (~> 2.5.0)
+    builder (3.2.2)
     oauth (0.4.7)
-    rack (1.5.2)
-    rack-protection (1.5.0)
+    rack (1.6.4)
+    rack-protection (1.5.3)
       rack
-    shotgun (0.9)
+    shotgun (0.9.1)
       rack (>= 1.0)
-    sinatra (1.3.5)
+    sinatra (1.4.6)
       rack (~> 1.4)
-      rack-protection (~> 1.3)
-      tilt (~> 1.3, >= 1.3.3)
-    systemu (2.5.2)
-    tilt (1.3.5)
-    uuid (2.3.7)
-      macaddr (~> 1.0)
+      rack-protection (~> 1.4)
+      tilt (>= 1.3, < 3)
+    tilt (2.0.1)
 
 PLATFORMS
   ruby
@@ -35,3 +29,6 @@ DEPENDENCIES
   ims-lti!
   shotgun
   sinatra
+
+BUNDLED WITH
+   1.10.5
