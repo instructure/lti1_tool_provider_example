@@ -30,8 +30,12 @@
 <% end %>
 
 <p>Try resizing the tool <br /> height: <input id="frame_height" /><button id="resize">resize</button></p>
+<p>Hide Module Navigation:<button id="hidenav">Hide Nav</button></p>
+<p>Show Module Navigation:<button id="shownav">Show Nav</button></p>
+<p>Scroll Canvas to top:<button id="scroll">Scroll</button></p>
+
 <script>
-  document.getElementById('resize').addEventListener("click", function(){
+  document.getElementById('resize').addEventListener("click", function () {
     var height = document.getElementById('frame_height').value;
     var default_height = Math.max(
         document.body.scrollHeight, document.body.offsetHeight,
@@ -42,7 +46,27 @@
       height: isNaN(height) || Number(height) == 0 ? default_height : height
     }), '*');
   });
+
+  document.getElementById('shownav').addEventListener("click", function () {
+    parent.postMessage(JSON.stringify({
+      subject: 'lti.showModuleNavigation',
+      show: true
+    }), '*');
+  });
+  document.getElementById('hidenav').addEventListener("click", function () {
+    parent.postMessage(JSON.stringify({
+      subject: 'lti.showModuleNavigation',
+      show: false
+    }), '*');
+  });
+
+  document.getElementById('scroll').addEventListener("click", function () {
+    parent.postMessage(JSON.stringify({
+      subject: 'lti.scrollToTop'
+    }), '*');
+  });
 </script>
+
 
 <p>  Here are the params that were passed to the tool: </p>
 <%= erb :_params_table %>
