@@ -1,0 +1,12 @@
+version: '2'
+services:
+  web:
+    environment:
+      VIRTUAL_HOST: lti1-example.docker
+    image: instructure/ruby-passenger:2.3
+    volumes:
+      - ".:/usr/src/app"
+      - "lti1-example-gems:/home/docker/.gem/ruby/2.3.0"
+
+volumes:
+  lti1-example-gems: {}
