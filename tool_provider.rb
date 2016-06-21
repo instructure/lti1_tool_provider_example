@@ -161,6 +161,7 @@ post '/assessment' do
   data['total_score'] = params['total_score'] if params['total_score'] && params['total_score'] != ''
   data['url'] = params['url'] if params['url'] && params['url'] != ''
   data['text'] = params['text'] if params['text'] && params['text'] != ''
+  data[:lti_launch_url] = params['lti_link'] if params['lti_link'] && params['lti_link'] != ''
 
   res = @tp.post_extended_replace_result!(data)
 

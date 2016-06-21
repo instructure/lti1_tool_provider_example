@@ -17,6 +17,9 @@
         <div>Text: <textarea name='text'></textarea></div>
       <% end %>
 
+      <p>You may also try to submit an LTI link</p>
+      <div>LTI Link: <input name='lti_link' /></div>
+
       <div><input type='submit' value='Submit' /></div>
       <% @tp.to_params.each do |key, value| %>
         <input type="hidden" name="launch_params[<%= key %>]" value="<%= value %>" />
