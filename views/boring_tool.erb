@@ -43,7 +43,7 @@
         document.documentElement.offsetHeight);
     parent.postMessage(JSON.stringify({
       subject: 'lti.frameResize',
-      height: isNaN(height) || Number(height) == 0 ? default_height : height
+      height: isNaN(height) || Number(height) == 0 ? default_height : Number(height)
     }), '*');
   });
 
