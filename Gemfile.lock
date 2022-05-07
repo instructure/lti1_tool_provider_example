@@ -13,7 +13,7 @@ GEM
     builder (3.2.3)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
-    oauth (0.5.4)
+    oauth (0.5.10)
     rack (2.2.3)
     rack-protection (2.2.0)
       rack
